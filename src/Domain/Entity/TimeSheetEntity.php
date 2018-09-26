@@ -2,12 +2,13 @@
 
 namespace App\Domain\Entity;
 
+use App\Domain\Model\TimeSlotInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TimeSheetRepository")
  */
-class TimeSheet
+class TimeSheetEntity  implements EntityInterface
 {
     /**
      * @ORM\Id()
@@ -22,15 +23,17 @@ class TimeSheet
     private $date;
 
     /**
-     * @ORM\Column(type="string", length=10)
+     * @ORM\ManyToOne(targetEntity="App\Entity\User")
+     * @ORM\JoinColumn(nullable=true)
      */
-    private $timeSlot;
+    private $user;
+
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity="App\Entity\Employer")
+     * @ORM\JoinColumn(nullable=true)
      */
-    private $userId;
+    private $employer;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -47,31 +50,25 @@ class TimeSheet
         return $this->date;
     }
 
-    public function setDate(\DateTimeInterface $date): self
+    public function getEmployer(): ?EmployerEntity
     {
-        $this->date = $date;
+        return $this->employer;
+    }
+
+    public function setEmployer(?EmployerEntity $employer): self
+    {
+        $this->employer = $employer;
         return $this;
     }
 
-    public function getTimeSlot(): ?string
+    public function getUser(): ?UserEntity
     {
-        return $this->timeSlot;
+        return $this->user;
     }
 
-    public function setTimeSlot(string $timeSlot): self
+    public function setUser(?UserEntity $user): self
     {
-        $this->timeSlot = $timeSlot;
-        return $this;
-    }
-
-    public function getUserId(): ?User
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(?User $userId): self
-    {
-        $this->userId = $userId;
+        $this->user = $user;
         return $this;
     }
 
@@ -80,9 +77,10 @@ class TimeSheet
         return $this->toDate;
     }
 
-    public function setToDate(?\DateTimeInterface $toDate): self
+    public function setTime(TimeSlotInterface $timeSlot): self
     {
-        $this->toDate = $toDate;
+        $this->date = $timeSlot->getDate();
+        $this->toDate = $timeSlot->getTodate();
         return $this;
     }
 }

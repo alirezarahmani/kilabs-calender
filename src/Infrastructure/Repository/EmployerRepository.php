@@ -2,30 +2,22 @@
 
 namespace App\Infrastructure\Repository;
 
+use App\Domain\Entity\EmployerEntity;
 use App\Domain\Repository\RepositoryInterface;
-use App\Domain\Entity\TimeSheetEntity;
-use Assert\Assertion;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
- * @method TimeSheetEntity|null find($id, $lockMode = null, $lockVersion = null)
- * @method TimeSheetEntity|null findOneBy(array $criteria, array $orderBy = null)
- * @method TimeSheetEntity[]    findAll()
- * @method TimeSheetEntity[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method EmployerEntity|null find($id, $lockMode = null, $lockVersion = null)
+ * @method EmployerEntity|null findOneBy(array $criteria, array $orderBy = null)
+ * @method EmployerEntity[]    findAll()
+ * @method EmployerEntity[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class TimeSheetRepository extends ServiceEntityRepository implements RepositoryInterface
+class EmployerRepository extends ServiceEntityRepository implements RepositoryInterface
 {
     public function __construct(RegistryInterface $registry)
     {
-        parent::__construct($registry, TimeSheetEntity::class);
-    }
-
-    public function update(TimeSheetEntity $timeSheet)
-    {
-        Assertion::notEmpty($timeSheet->getId(), 'please add some value to TimeSheet');
-        $this->_em->persist($timeSheet);
-        $this->_em->flush($timeSheet);
+        parent::__construct($registry, EmployerEntity::class);
     }
 
 //    /**

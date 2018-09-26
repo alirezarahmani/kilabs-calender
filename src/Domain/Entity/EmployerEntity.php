@@ -5,18 +5,10 @@ namespace App\Domain\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\EmployerRepository")
  */
-class User
+class EmployerEntity implements EntityInterface
 {
-    const CANDIDATE = 'candidate';
-    const INTERVIEWER = 'interviewer';
-
-    const TYPES = [
-        self::CANDIDATE,
-        self::INTERVIEWER
-    ];
-
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -34,10 +26,6 @@ class User
      */
     private $email;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $type;
 
     public function getId(): ?int
     {
@@ -64,18 +52,6 @@ class User
     public function setEmail(?string $email): self
     {
         $this->email = $email;
-
-        return $this;
-    }
-
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
-    public function setType(string $type): self
-    {
-        $this->type = $type;
 
         return $this;
     }

@@ -2,10 +2,10 @@
 
 namespace App\Domain\Model;
 
+use App\Domain\Entity\EntityInterface;
 use App\Domain\Repository\RepositoryInterface;
-use App\Infrastructure\Validator\ValidatorInterface;
 
 interface InterviewInterface
 {
-    public function apply(array $inputs, RulesInterface $rule, RepositoryInterface $repository);
+    public function apply(EntityInterface $employer, TimeSlotInterface $timeSlot, RepositoryInterface $repository);
 }
