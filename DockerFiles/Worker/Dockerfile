@@ -22,8 +22,6 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get update && apt-get install -y --forc
     php7.2-curl \
     php7.2-json \
     php7.2-mysql \
-    php7.2-opcache \
-    php7.2-apcu \
     php7.2-xml \
     php7.2-intl \
     php7.2-mbstring \
