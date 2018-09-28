@@ -2,6 +2,9 @@
 
 namespace App\Infrastructure\Repository;
 
+use App\Domain\Entity\EmployerEntity;
+use App\Domain\Entity\EntityInterface;
+use App\Domain\Entity\UserEntity;
 use App\Domain\Repository\RepositoryInterface;
 use App\Domain\Entity\TimeSheetEntity;
 use Assert\Assertion;
@@ -21,9 +24,39 @@ class TimeSheetRepository extends ServiceEntityRepository implements RepositoryI
         parent::__construct($registry, TimeSheetEntity::class);
     }
 
-    public function update(TimeSheetEntity $timeSheet)
+    public function removeEmployerUselessBookedTimes(EmployerEntity $entity, \DateTime $date, ?\DateTime $toDate)
     {
-        Assertion::notEmpty($timeSheet->getId(), 'please add some value to TimeSheet');
+        $this->removeIntersectDuration($entity, $date, $toDate);
+    }
+
+    public function removeUserUselessBookedTimes(UserEntity $entity, \DateTime $date, ?\DateTime $toDate)
+    {
+        $this->removeIntersectDuration($entity, $date, $toDate);
+    }
+
+    private function removeIntersectDuration(EntityInterface $entity, \DateTime $date, ?\DateTime $toDate)
+    {
+        $qb = $this->createQueryBuilder('t')->delete('t');
+        $qb->Where('t.employer = :employer');
+
+        $operator = '=';
+        if (!empty($toDate)) {
+            $operator = '>=';
+            $qb->andWhere('t.toDate <= :toDate')
+               ->setParameter('toDate', $toDate);
+        }
+            $qb->andWhere('t.date ' . $operator .' :date')
+               ->setParameter('date', $date);
+
+            $qb->andWhere('t.employer = :employer')
+            ->setParameter('employer', $entity)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function update(TimeSheetEntity $timeSheet): void
+    {
+        Assertion::notEmpty($timeSheet->getId(), 'please add set value first,');
         $this->_em->persist($timeSheet);
         $this->_em->flush($timeSheet);
     }

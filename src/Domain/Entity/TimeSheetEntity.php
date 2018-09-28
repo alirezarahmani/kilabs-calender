@@ -2,7 +2,7 @@
 
 namespace App\Domain\Entity;
 
-use App\Domain\Model\TimeSlotInterface;
+use App\Domain\Model\BookTimesInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -77,10 +77,10 @@ class TimeSheetEntity  implements EntityInterface
         return $this->toDate;
     }
 
-    public function setTime(TimeSlotInterface $timeSlot): self
+    public function setTime(BookTimesInterface $bookTimes): self
     {
-        $this->date = $timeSlot->getDate();
-        $this->toDate = $timeSlot->getTodate();
+        $this->date = $bookTimes->getDate();
+        $this->toDate = $bookTimes->getTodate();
         return $this;
     }
 }

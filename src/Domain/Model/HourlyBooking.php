@@ -4,7 +4,7 @@ namespace App\Domain\Model;
 
 use Assert\Assertion;
 
-class HourlyBooking implements RulesInterface
+class HourlyBooking implements BookingTimeFormatInterface
 {
     public function setTime(\DateTime $date, string $time): \DateTime
     {
@@ -14,7 +14,7 @@ class HourlyBooking implements RulesInterface
             'wrong hourly timeSlot, please make sure you select 11:00 like format'
         );
         $time = explode(':', $time);
-        $date->setTime($time[0], $time[1]);
+        $date->setTime($time[0], '00');
         return $date;
     }
 }

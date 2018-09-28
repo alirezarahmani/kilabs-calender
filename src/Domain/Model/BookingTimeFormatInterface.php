@@ -2,6 +2,6 @@
 
 namespace App\Domain\Model;
 
-interface RulesInterface
+interface BookingTimeFormatInterface
 {
 }

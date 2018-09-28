@@ -7,25 +7,26 @@ use App\Domain\Entity\TimeSheetEntity;
 use App\Domain\Entity\UserEntity;
 use App\Domain\Repository\RepositoryInterface;
 use App\Infrastructure\Repository\TimeSheetRepository;
+use Assert\Assertion;
 
 class Candidate implements InterviewInterface
 {
     /**
-     * @param UserEntity      $user
-     * @param HourlyTimeSlot      $timeSlot
+     * @param UserEntity          $user
+     * @param BookDuration        $bookTimes
      * @param TimeSheetRepository $repository
      */
-    public function apply(EntityInterface $user, TimeSlotInterface $timeSlot, RepositoryInterface $repository)
+    public function apply(EntityInterface $user, BookTimesInterface $bookTimes, RepositoryInterface $repository)
     {
-        $timeSheet = $repository->findOneBy(['user' => $user, 'date' => $timeSlot->getDate()]);
+        $timeSheet = $repository->findOneBy(['user' => $user, 'date' => $bookTimes->getDate(), 'toDate' => $bookTimes->getToDate()]);
+        Assertion::notEmpty($timeSheet, 'the requested time slot is already exist');
+        $repository->removeUserUselessBookedTimes($user, $bookTimes->getDate(), $bookTimes->getToDate());
         /**
-         * @todo: Add Other Candidate Specific business rules
+         * @todo: Add Other Interviewer Specific business rules
          */
-        if (empty($timeSheet)) {
-            $timeSheet = new TimeSheetEntity();
-            $timeSheet->setUser($user);
-        }
-        $timeSheet->setTime($timeSlot);
+        $timeSheet = new TimeSheetEntity();
+        $timeSheet->setUser($user);
+        $timeSheet->setTime($bookTimes);
         $repository->update($timeSheet);
     }
 }

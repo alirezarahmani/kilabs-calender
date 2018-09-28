@@ -31,12 +31,16 @@ class BookingFactory
      * @param array               $inputs
      * @param ValidatorInterface  $applyTimeApiValidator
      * @param RepositoryInterface $repository
-     * @param HourlyTimeSlot $timeSlot
+     * @param BookDuration        $bookingTimeFormat
      */
-    public function book(array $inputs , ValidatorInterface $applyTimeApiValidator, RepositoryInterface $repository, TimeSlotInterface $timeSlot)
-    {
+    public function book(
+        array $inputs,
+        ValidatorInterface $applyTimeApiValidator,
+        RepositoryInterface $repository,
+        BookingTimeFormatInterface $bookingTimeFormat
+    ) {
         $applyTimeApiValidator->validate($inputs);
-        $timeSlots = $timeSlot->bookTimes($inputs['date'], $inputs['time'], $inputs['toDate'], $inputs['toTime']);
+        $bookDuration = new BookDuration($bookingTimeFormat, $inputs['date'], $inputs['time'], $inputs['toDate'], $inputs['toTime']);
         /**
          * @TODO: fix this
          * $inputs['userType'] MUST GET FROM SESSION (LOGGED USER)
@@ -46,11 +50,11 @@ class BookingFactory
         if ($inputs['userType'] == self::INTERVIEWER) {
             /** @var EmployerEntity $employer */
             $employer = $this->entityManager->getRepository(EmployerEntity::class)->find($inputs['id']);
-            (new Interviewer())->apply($employer, $timeSlots, $repository);
+            (new Interviewer())->apply($employer, $bookDuration, $repository);
         } elseif ($inputs['userType'] == self::CANDIDATE) {
             /** @var UserEntity $user */
             $user = $this->entityManager->getRepository(UserEntity::class)->find($inputs['id']);
-            (new Candidate())->apply($user, $timeSlots, $repository);
+            (new Candidate())->apply($user, $bookDuration, $repository);
         }
     }
 }

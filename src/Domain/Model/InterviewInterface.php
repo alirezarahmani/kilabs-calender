@@ -7,5 +7,5 @@ use App\Domain\Repository\RepositoryInterface;
 
 interface InterviewInterface
 {
-    public function apply(EntityInterface $employer, TimeSlotInterface $timeSlot, RepositoryInterface $repository);
+    public function apply(EntityInterface $employer, BookTimesInterface $bookTimes, RepositoryInterface $repository);
 }

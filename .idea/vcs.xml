@@ -2,5 +2,8 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/vendor/hamcrest/hamcrest-php" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/vendor/mockery/mockery" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/vendor/squizlabs/php_codesniffer" vcs="Git" />
   </component>
 </project>
