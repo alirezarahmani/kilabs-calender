@@ -5,6 +5,9 @@ namespace App\Infrastructure\Validator;
 use InvalidArgumentException;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Exception\MissingOptionsException;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Validation;
 
 class FreeTimeApiValidator implements ValidatorInterface
@@ -14,17 +17,26 @@ class FreeTimeApiValidator implements ValidatorInterface
         $validator = Validation::createValidator();
 
         $constraint = new Assert\Collection([
-            'hour' => new Assert\Optional([
+            'hour' => [
                 new Assert\Time(),
                 new Assert\NotBlank()
-            ]),
+            ],
             'date' => new Assert\Date(),
             'toHour' => new Assert\Optional([
-                new Assert\DateTime()
+                new Assert\Time()
             ]),
             'toDate' => new Assert\Optional([
-                new Assert\Date()
-            ]),
+                new Assert\Date(),
+                new Assert\GreaterThan($inputs['date']),
+                new Assert\Callback(
+                    function ($object, ExecutionContextInterface $context, $payload) use ($inputs) {
+                        if (!isset($inputs['toHour'])) {
+                            $context->buildViolation('please make sure toHour is set')
+                                ->atPath('toHour')
+                                ->addViolation();
+                        }
+                    }
+                )]),
             //@todo: must remove these
             'id' => new Assert\NotBlank(),
             'userType' => new Assert\NotBlank()
@@ -35,7 +47,7 @@ class FreeTimeApiValidator implements ValidatorInterface
             $errors = [];
             /** @var ConstraintViolation $violation */
             foreach ($violations as $violation) {
-                $errors[] =$violation->getMessage();
+                $errors[] = implode('', $violation->getParameters()) . $violation->getMessage();
             }
             throw new InvalidArgumentException(json_encode($errors));
         }

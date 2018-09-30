@@ -14,7 +14,7 @@ class HourlyTimeFormat implements FreeTimeFormatInterface
             'wrong hourly timeSlot, please make sure you select 11:00:00 like format'
         );
         $time = explode(':', $time);
-        $date->setTime($time[0], '00', '00');
+        $date->setTime(intval($time[0]), 0, 0);
         return $date;
     }
 }
