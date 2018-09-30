@@ -16,7 +16,7 @@ class CandidateFreeTimes implements InterviewInterface
      * @param FreeTimeDuration    $bookTimes
      * @param TimeSheetRepository $repository
      */
-    public function apply(EntityInterface $user, FreeTimesInterface $bookTimes, RepositoryInterface $repository)
+    public function apply(EntityInterface $user, FreeTimesInterface $bookTimes, RepositoryInterface $repository):void
     {
         $timeSheet = $repository->findOneBy(['user' => $user, 'date' => $bookTimes->getDate(), 'toDate' => $bookTimes->getToDate()]);
         Assertion::null($timeSheet, 'the requested time slot is already exist');
@@ -24,6 +24,8 @@ class CandidateFreeTimes implements InterviewInterface
         /**
          * @todo: Add Other Interviewer Specific business rules
          */
+
+        //according to grasp creator pattern: https://en.wikipedia.org/wiki/GRASP_(object-oriented_design)#Creator
         $timeSheet = new TimeSheetEntity();
         $timeSheet->setUser($user);
         $timeSheet->setTime($bookTimes);

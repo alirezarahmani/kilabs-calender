@@ -55,5 +55,4 @@ class EmployerEntity implements EntityInterface
 
         return $this;
     }
-
 }

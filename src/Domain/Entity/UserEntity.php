@@ -55,5 +55,4 @@ class UserEntity implements EntityInterface
 
         return $this;
     }
-
 }

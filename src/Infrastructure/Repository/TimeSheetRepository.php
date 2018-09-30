@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace App\Infrastructure\Repository;
 
+//according to https://stackoverflow.com/questions/13846209/where-to-define-the-interfaces-for-a-repository-in-an-layered-architecture
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use App\Domain\Entity\EmployerEntity;
 use App\Domain\Entity\EntityInterface;
