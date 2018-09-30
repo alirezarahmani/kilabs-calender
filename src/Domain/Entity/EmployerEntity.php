@@ -1,11 +1,11 @@
 <?php
-
+declare(strict_types=1);
 namespace App\Domain\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\EmployerRepository")
+ * @ORM\Entity(repositoryClass="App\Infrastructure\Repository\EmployerRepository")
  */
 class EmployerEntity implements EntityInterface
 {

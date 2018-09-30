@@ -1,14 +1,15 @@
 <?php
-
+declare(strict_types=1);
 namespace App\Domain\Model;
 
 use App\Domain\Entity\EmployerEntity;
 use App\Domain\Entity\UserEntity;
 use App\Domain\Repository\RepositoryInterface;
 use App\Infrastructure\Validator\ValidatorInterface;
+use Assert\Assertion;
 use Doctrine\ORM\EntityManagerInterface;
 
-class BookingFactory
+class FreeTimeFactory
 {
     // @todo: fix this
     const CANDIDATE = 'candidate';
@@ -31,16 +32,22 @@ class BookingFactory
      * @param array               $inputs
      * @param ValidatorInterface  $applyTimeApiValidator
      * @param RepositoryInterface $repository
-     * @param BookDuration        $bookingTimeFormat
+     * @param FreeTimeDuration    $bookingTimeFormat
      */
-    public function book(
+    public function set(
         array $inputs,
         ValidatorInterface $applyTimeApiValidator,
         RepositoryInterface $repository,
-        BookingTimeFormatInterface $bookingTimeFormat
+        FreeTimeFormatInterface $bookingTimeFormat
     ) {
         $applyTimeApiValidator->validate($inputs);
-        $bookDuration = new BookDuration($bookingTimeFormat, $inputs['date'], $inputs['time'], $inputs['toDate'], $inputs['toTime']);
+        $timeDuration = new FreeTimeDuration(
+            $bookingTimeFormat,
+            $inputs['date'],
+            $inputs['hour'],
+            $inputs['toDate'] ?? null,
+            $inputs['toHour'] ?? null
+        );
         /**
          * @TODO: fix this
          * $inputs['userType'] MUST GET FROM SESSION (LOGGED USER)
@@ -50,11 +57,13 @@ class BookingFactory
         if ($inputs['userType'] == self::INTERVIEWER) {
             /** @var EmployerEntity $employer */
             $employer = $this->entityManager->getRepository(EmployerEntity::class)->find($inputs['id']);
-            (new Interviewer())->apply($employer, $bookDuration, $repository);
+            Assertion::notEmpty($employer, 'sorry, the employer with id:' . $inputs['id'] . ' is not found');
+            (new InterviewerFreeTimes())->apply($employer, $timeDuration, $repository);
         } elseif ($inputs['userType'] == self::CANDIDATE) {
             /** @var UserEntity $user */
             $user = $this->entityManager->getRepository(UserEntity::class)->find($inputs['id']);
-            (new Candidate())->apply($user, $bookDuration, $repository);
+            Assertion::notEmpty($user, 'sorry, the user with id:' . $inputs['id'] . ' is not found');
+            (new CandidateFreeTimes())->apply($user, $timeDuration, $repository);
         }
     }
 }

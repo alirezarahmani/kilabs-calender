@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 namespace App\Domain\Model;
 
 use App\Domain\Entity\EmployerEntity;
@@ -9,18 +9,18 @@ use App\Domain\Repository\RepositoryInterface;
 use App\Infrastructure\Repository\TimeSheetRepository;
 use Assert\Assertion;
 
-class Interviewer implements InterviewInterface
+class InterviewerFreeTimes implements InterviewInterface
 {
     /**
      * @param EmployerEntity      $employer
-     * @param BookDuration        $bookTimes
+     * @param FreeTimeDuration    $bookTimes
      * @param TimeSheetRepository $repository
      */
-    public function apply(EntityInterface $employer, BookTimesInterface $bookTimes, RepositoryInterface $repository)
+    public function apply(EntityInterface $employer, FreeTimesInterface $bookTimes, RepositoryInterface $repository)
     {
         $timeSheet = $repository->findOneBy(['employer' => $employer, 'date' => $bookTimes->getDate(), 'toDate' => $bookTimes->getToDate()]);
-        Assertion::notEmpty($timeSheet, 'the requested time slot is already exist');
-        $repository->removeEmployerUselessBookedTimes($employer, $bookTimes->getDate(), $bookTimes->getToDate());
+        Assertion::null($timeSheet, 'the requested time slot is already exist');
+        $repository->removeIntersectDuration($employer, $bookTimes->getDate(), $bookTimes->getToDate());
         /**
          * @todo: Add Other Interviewer Specific business rules
          */

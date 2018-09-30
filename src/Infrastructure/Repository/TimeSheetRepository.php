@@ -1,14 +1,13 @@
 <?php
-
+declare(strict_types=1);
 namespace App\Infrastructure\Repository;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use App\Domain\Entity\EmployerEntity;
 use App\Domain\Entity\EntityInterface;
 use App\Domain\Entity\UserEntity;
 use App\Domain\Repository\RepositoryInterface;
 use App\Domain\Entity\TimeSheetEntity;
-use Assert\Assertion;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
@@ -24,19 +23,11 @@ class TimeSheetRepository extends ServiceEntityRepository implements RepositoryI
         parent::__construct($registry, TimeSheetEntity::class);
     }
 
-    public function removeEmployerUselessBookedTimes(EmployerEntity $entity, \DateTime $date, ?\DateTime $toDate)
+    public function removeIntersectDuration(EntityInterface $entity, \DateTime $date, ?\DateTime $toDate)
     {
-        $this->removeIntersectDuration($entity, $date, $toDate);
-    }
+        $qb = $this->createQueryBuilder('t');
 
-    public function removeUserUselessBookedTimes(UserEntity $entity, \DateTime $date, ?\DateTime $toDate)
-    {
-        $this->removeIntersectDuration($entity, $date, $toDate);
-    }
 
-    private function removeIntersectDuration(EntityInterface $entity, \DateTime $date, ?\DateTime $toDate)
-    {
-        $qb = $this->createQueryBuilder('t')->delete('t');
         $qb->Where('t.employer = :employer');
 
         $operator = '=';
@@ -48,15 +39,18 @@ class TimeSheetRepository extends ServiceEntityRepository implements RepositoryI
             $qb->andWhere('t.date ' . $operator .' :date')
                ->setParameter('date', $date);
 
+        if (is_a($entity, EmployerEntity::class)) {
             $qb->andWhere('t.employer = :employer')
-            ->setParameter('employer', $entity)
-            ->getQuery()
-            ->getResult();
+                ->setParameter('employer', $entity);
+        } elseif (is_a($entity, UserEntity::class)) {
+            $qb->andWhere('t.user = :user')
+                ->setParameter('user', $entity);
+        }
+        $qb->delete('t');
     }
 
     public function update(TimeSheetEntity $timeSheet): void
     {
-        Assertion::notEmpty($timeSheet->getId(), 'please add set value first,');
         $this->_em->persist($timeSheet);
         $this->_em->flush($timeSheet);
     }

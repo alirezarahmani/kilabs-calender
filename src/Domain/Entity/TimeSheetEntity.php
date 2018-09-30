@@ -1,14 +1,14 @@
 <?php
-
+declare(strict_types=1);
 namespace App\Domain\Entity;
 
-use App\Domain\Model\BookTimesInterface;
+use App\Domain\Model\FreeTimesInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\TimeSheetRepository")
+ * @ORM\Entity(repositoryClass="App\Infrastructure\Repository\TimeSheetRepository")
  */
-class TimeSheetEntity  implements EntityInterface
+class TimeSheetEntity implements EntityInterface
 {
     /**
      * @ORM\Id()
@@ -23,14 +23,14 @@ class TimeSheetEntity  implements EntityInterface
     private $date;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User")
+     * @ORM\ManyToOne(targetEntity="App\Domain\Entity\UserEntity")
      * @ORM\JoinColumn(nullable=true)
      */
     private $user;
 
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Employer")
+     * @ORM\ManyToOne(targetEntity="App\Domain\Entity\EmployerEntity")
      * @ORM\JoinColumn(nullable=true)
      */
     private $employer;
@@ -77,7 +77,7 @@ class TimeSheetEntity  implements EntityInterface
         return $this->toDate;
     }
 
-    public function setTime(BookTimesInterface $bookTimes): self
+    public function setTime(FreeTimesInterface $bookTimes): self
     {
         $this->date = $bookTimes->getDate();
         $this->toDate = $bookTimes->getTodate();

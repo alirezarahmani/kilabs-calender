@@ -29,5 +29,7 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
-    App\Domain\Model\BookingFactory:
+    App\Infrastructure\Request\ApiRequest:
+        autowire: true      # Automatically injects dependencies in your services.
+    App\Infrastructure\Response\ApiJsonResponse:
         autowire: true      # Automatically injects dependencies in your services.
