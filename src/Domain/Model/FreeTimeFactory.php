@@ -41,6 +41,8 @@ class FreeTimeFactory
         FreeTimeFormatInterface $bookingTimeFormat
     ) {
         $applyTimeApiValidator->validate($inputs);
+
+        //according to grasp creator pattern: https://en.wikipedia.org/wiki/GRASP_(object-oriented_design)#Creator
         $timeDuration = new FreeTimeDuration(
             $bookingTimeFormat,
             $inputs['date'],

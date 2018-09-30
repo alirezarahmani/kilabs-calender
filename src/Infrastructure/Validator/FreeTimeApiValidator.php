@@ -6,8 +6,6 @@ use InvalidArgumentException;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Validator\Exception\MissingOptionsException;
-use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Validation;
 
 class FreeTimeApiValidator implements ValidatorInterface
@@ -23,11 +21,21 @@ class FreeTimeApiValidator implements ValidatorInterface
             ],
             'date' => new Assert\Date(),
             'toHour' => new Assert\Optional([
-                new Assert\Time()
+                new Assert\Time(),
+                new Assert\Callback(
+                    function ($object, ExecutionContextInterface $context, $payload) use ($inputs) {
+                        if (!isset($inputs['toDate']) && $object < $inputs['hour']) {
+                            $context->buildViolation('please make sure toHour is greater than hour')
+                                ->atPath('toHour')
+                                ->addViolation();
+                        }
+                    }
+                )
             ]),
             'toDate' => new Assert\Optional([
                 new Assert\Date(),
-                new Assert\GreaterThan($inputs['date']),
+                new Assert\GreaterThan($inputs['date'] ?? ''),
+                new Assert\NotEqualTo($inputs['date'] ?? ''),
                 new Assert\Callback(
                     function ($object, ExecutionContextInterface $context, $payload) use ($inputs) {
                         if (!isset($inputs['toHour'])) {

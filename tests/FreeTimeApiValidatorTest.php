@@ -79,12 +79,50 @@ class FreeTimeApiValidatorTest extends TestCase
         $this->validator->validate(['date' => '2010-09-01', 'hour' => '12:00:00', 'toHour' => '130:00','id' => 1, 'userType' => 'candidate']);
     }
 
-
     /** @test */
     public function should_throw_exception_with_wrong_to_date()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('["\"2016\"This value is not a valid date."]');
         $this->validator->validate(['date' => '2010-09-01', 'hour' => '12:00:00', 'toDate' => '2016','toHour' => '13:00:00','id' => 1, 'userType' => 'candidate']);
+    }
+
+    /** @test */
+    public function should_throw_exception_with_smaller_to_date()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('["\"2000-01-10\"\"2010-09-01\"stringThis value should be greater than \"2010-09-01\"."]');
+        $this->validator->validate(['date' => '2010-09-01', 'hour' => '12:00:00', 'toDate' => '2000-01-10','toHour' => '13:00:00','id' => 1, 'userType' => 'candidate']);
+    }
+
+    /** @test */
+    public function should_throw_exception_with_smaller_to_hour()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('["please make sure toHour is greater than hour"]');
+        $this->validator->validate(['date' => '2010-09-01', 'hour' => '14:00:00', 'toHour' => '10:00:00','id' => 1, 'userType' => 'candidate']);
+    }
+
+    /** @test */
+    public function should_throw_exception_with_equal_to_hour()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('["please make sure toHour is greater than hour"]');
+        $this->validator->validate(['date' => '2010-09-01', 'hour' => '14:00:00', 'toHour' => '10:00:00','id' => 1, 'userType' => 'candidate']);
+    }
+
+    /** @test */
+    public function should_throw_exception_with_equal_to_date()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('["\"2010-09-01\"\"2010-09-01\"stringThis value should be greater than \"2010-09-01\".","\"2010-09-01\"\"2010-09-01\"stringThis value should not be equal to \"2010-09-01\"."]');
+        $this->validator->validate(['date' => '2010-09-01', 'hour' => '12:00:00', 'toDate' => '2010-09-01','toHour' => '13:00:00','id' => 1, 'userType' => 'candidate']);
+    }
+
+    /** @test */
+    public function should_not_throw_exception_with_right_values()
+    {
+        $this->validator->validate(['date' => '2019-10-01', 'hour' => '12:00:00', 'toDate' => '2019-12-01','toHour' => '13:00:00','id' => 1, 'userType' => 'candidate']);
+        $this->assertTrue(true);
     }
 }
