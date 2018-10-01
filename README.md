@@ -31,9 +31,9 @@ API:
 
     ```json
     {
-        Data: [ ],
-        Status: true,
-        Message: ""
+        "Data": [ ],
+        "Status": true,
+        "Message": ""
     }
     ```
 
@@ -41,9 +41,9 @@ API:
 
     ```json
     {
-        Data: [ ],
-        Status: false,
-        Message: {
+        "Data": [ ],
+        "Status": false,
+        "Message": {
           "the requested time slot is already exist"
         }
     }
