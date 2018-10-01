@@ -7,10 +7,8 @@ services:
     - ${LOCAL_IP}:${PHP_SSH_PORT}:22
     depends_on:
     - mysql
-    - memcached
     links:
     - mysql
-    - memcached
     environment:
       MYSQL_HOST: mysql
       MYSQL_DATABASE: kilabs
@@ -21,12 +19,9 @@ services:
       VENDOR_DIR: ${VENDOR_DIR}
     volumes:
     - ${LOCAL_DEV_DIR}:/var/www
-    - ${LOCAL_DEV_DIR}/storage:/var/www/storage
   mysql:
     build: ./DockerFiles/Mysql
     ports:
     - ${LOCAL_IP}:${MYSQL_PORT}:3306
     environment:
       MYSQL_ROOT_PASSWORD: root
-  memcached:
-    build: ./DockerFiles/Memcached

@@ -9,9 +9,8 @@ if [ ! -f .env ]; then
     echo MYSQL_PORT=3307 >> .env
     echo LOCAL_DEV_DIR=$(pwd) >> .env
     echo APP_ENV=dev >> .env
-    APP_SECRET=e5565d22e6b3514549e6fa218ef7555b >> .env
-    DATABASE_URL="mysql://root:root@mysql:3306/kilab_db" >> .env
-
+    echo APP_SECRET=e5565d22e6b3514549e6fa218ef7555b >> .env
+    echo DATABASE_URL=mysql://root:root@mysql:3306/kilab_db >> .env
 fi
 
 docker-compose build

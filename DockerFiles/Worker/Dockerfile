@@ -74,8 +74,6 @@ RUN echo "xdebug.profiler_output_dir=/var/www/cachegrind/" >> /etc/php/7.2/fpm/c
 RUN echo "xdebug.profiler_enable_trigger=1" >> /etc/php/7.2/fpm/conf.d/20-xdebug.ini
 RUN echo "xdebug.profiler_output_name= cachegrind.out" >> /etc/php/7.2/fpm/conf.d/20-xdebug.ini
 RUN mkdir /root/.ssh/
-ADD memcached.ini /etc/php/7.2/fpm/conf.d/25-memcached.ini
-ADD memcached.ini /etc/php/7.2/cli/conf.d/25-memcached.ini
 
 ADD default.conf /etc/nginx/conf.d/default.conf
 ADD default.conf /etc/nginx/sites-enabled/default

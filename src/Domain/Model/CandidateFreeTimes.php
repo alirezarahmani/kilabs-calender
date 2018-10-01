@@ -13,14 +13,14 @@ class CandidateFreeTimes implements InterviewInterface
 {
     /**
      * @param UserEntity          $user
-     * @param FreeTimeDuration    $bookTimes
+     * @param FreeTimeDuration    $freeTimes
      * @param TimeSheetRepository $repository
      */
-    public function apply(EntityInterface $user, FreeTimesInterface $bookTimes, RepositoryInterface $repository):void
+    public function apply(EntityInterface $user, FreeTimesInterface $freeTimes, RepositoryInterface $repository):void
     {
-        $timeSheet = $repository->findOneBy(['user' => $user, 'date' => $bookTimes->getDate(), 'toDate' => $bookTimes->getToDate()]);
+        $timeSheet = $repository->findOneBy(['user' => $user, 'date' => $freeTimes->getDate(), 'toDate' => $freeTimes->getToDate()]);
         Assertion::null($timeSheet, 'the requested time slot is already exist');
-        $repository->removeIntersectDuration($user, $bookTimes->getDate(), $bookTimes->getToDate());
+        $repository->removeIntersectDuration($user, $freeTimes->getDate(), $freeTimes->getToDate());
         /**
          * @todo: Add Other Interviewer Specific business rules
          */
@@ -28,7 +28,7 @@ class CandidateFreeTimes implements InterviewInterface
         //according to grasp creator pattern: https://en.wikipedia.org/wiki/GRASP_(object-oriented_design)#Creator
         $timeSheet = new TimeSheetEntity();
         $timeSheet->setUser($user);
-        $timeSheet->setTime($bookTimes);
+        $timeSheet->setTime($freeTimes);
         $repository->update($timeSheet);
     }
 }

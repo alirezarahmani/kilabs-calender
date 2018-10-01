@@ -13,20 +13,20 @@ class InterviewerFreeTimes implements InterviewInterface
 {
     /**
      * @param EmployerEntity      $employer
-     * @param FreeTimeDuration    $bookTimes
+     * @param FreeTimeDuration    $freeTimes
      * @param TimeSheetRepository $repository
      */
-    public function apply(EntityInterface $employer, FreeTimesInterface $bookTimes, RepositoryInterface $repository)
+    public function apply(EntityInterface $employer, FreeTimesInterface $freeTimes, RepositoryInterface $repository)
     {
-        $timeSheet = $repository->findOneBy(['employer' => $employer, 'date' => $bookTimes->getDate(), 'toDate' => $bookTimes->getToDate()]);
+        $timeSheet = $repository->findOneBy(['employer' => $employer, 'date' => $freeTimes->getDate(), 'toDate' => $freeTimes->getToDate()]);
         Assertion::null($timeSheet, 'the requested time slot is already exist');
-        $repository->removeIntersectDuration($employer, $bookTimes->getDate(), $bookTimes->getToDate());
+        $repository->removeIntersectDuration($employer, $freeTimes->getDate(), $freeTimes->getToDate());
         /**
          * @todo: Add Other Interviewer Specific business rules
          */
         $timeSheet = new TimeSheetEntity();
         $timeSheet->setEmployer($employer);
-        $timeSheet->setTime($bookTimes);
+        $timeSheet->setTime($freeTimes);
         $repository->update($timeSheet);
     }
 }
